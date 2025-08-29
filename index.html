@@ -5,54 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Puntos de Jugadores</title>
     <link rel="stylesheet" href="style.css">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        // Tu configuración de Firebase
+        const firebaseConfig = {
+          apiKey: "TU_API_KEY",
+          authDomain: "TU_AUTH_DOMAIN",
+          databaseURL: "TU_DATABASE_URL",
+          projectId: "TU_PROJECT_ID",
+          storageBucket: "TU_STORAGE_BUCKET",
+          messagingSenderId: "TU_MESSAGING_SENDER_ID",
+          appId: "TU_APP_ID"
+        };
+        // Inicializa Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
 </head>
 <body>
-    <header>
-        <h1>Administración de Puntos de Jugadores</h1>
-    </header>
-
-    <main>
-        <section id="admin-section" style="display: none;">
-            <h2>Panel de Administración</h2>
-            <div id="login-container">
-                <label for="admin-key">Clave de Acceso:</label>
-                <input type="password" id="admin-key">
-                <button onclick="loginAdmin()">Entrar</button>
-            </div>
-            
-            <div id="admin-panel" style="display: none;">
-                <h3>Otorgar Puntos</h3>
-                <label for="category-select">Selecciona Categoría:</label>
-                <select id="category-select">
-                    <option value="pollito">Pollito</option>
-                    <option value="infantil">Infantil</option>
-                    <option value="preinfantil">Preinfantil</option>
-                    <option value="prejuvenil">Prejuvenil</option>
-                    <option value="juvenil">Juvenil</option>
-                    <option value="femenina">Femenina</option>
-                </select>
-                
-                <label for="player-name">Nombre del Jugador:</label>
-                <input type="text" id="player-name">
-
-                <label for="points-input">Puntos a Otorgar:</label>
-                <input type="number" id="points-input" min="1">
-                
-                <button onclick="addPoints()">Otorgar Puntos</button>
-            </div>
-        </section>
-
-        <section id="player-section">
-            <h2>Puntajes de Jugadores</h2>
-            <div id="points-display">
-                </div>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2024 JUGADORES</p>
-    </footer>
-
-    <script src="script.js"></script>
+...
+<script src="script.js"></script>
 </body>
 </html>
