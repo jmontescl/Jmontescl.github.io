@@ -8,7 +8,7 @@ const playerNameInput = document.getElementById('player-name');
 const pointsInput = document.getElementById('points-input');
 const pointsDisplay = document.getElementById('points-display');
 
-// Estas variables DEBEN ser declaradas ANTES de las funciones que las usan.
+// Estas variables DEBEN ser declaradas antes de cualquier función que las utilice
 const database = firebase.database();
 const playersRef = database.ref('players');
 
