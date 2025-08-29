@@ -1,1 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Academia</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+      width: 300px;
+      text-align: center;
+    }
+    input {
+      display: block;
+      margin: 10px auto;
+      padding: 8px;
+      width: 90%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px;
+      width: 100%;
+      background: #28a745;
+      border: none;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <h2>Login Academia</h2>
+  <select id="tipoUsuario">
+    <option value="admin">Administrador</option>
+    <option value="jugador">Jugador</option>
+  </select>
+  <input type="text" id="usuario" placeholder="Usuario">
+  <input type="password" id="clave" placeholder="Contraseña">
+  <button onclick="login()">Ingresar</button>
+  <p id="mensaje"></p>
+</div>
+
+<script>
+  // Administrador fijo
+  const adminUser = { user: "admin", pass: "1234" };
+
+  // Jugadores registrados (incluye a Los Angeles)
+  const jugadores = [
+    { user: "juan10", pass: "abcd", nombre: "Juan Pérez", categoria: "Juvenil", puntos: 10 },
+    { user: "maria9", pass: "maria123", nombre: "María López", categoria: "Femenina", puntos: 15 },
+    { user: "carlos8", pass: "qwerty", nombre: "Carlos Gómez", categoria: "Prejuvenil", puntos: 8 },
+    { user: "losangeles", pass: "solares", nombre: "Los Angeles", categoria: "Equipo", puntos: 25 }
+  ];
+
+  function login() {
+    const tipo = document.getElementById("tipoUsuario").value;
+    const user = document.getElementById("usuario").value;
+    const pass = document.getElementById("clave").value;
+    const mensaje = document.getElementById("mensaje");
+
+    if (tipo === "admin") {
+      if (user === adminUser.user && pass === adminUser.pass) {
+        mensaje.innerHTML = "✅ Bienvenido Administrador";
+        // Esta línea te redirige al panel de administrador
+        window.location.href = "admin.html";
+      } else {
+        mensaje.innerHTML = "❌ Usuario o contraseña incorrectos (Admin)";
+      }
+    }
+
+    if (tipo === "jugador") {
+      const jugador = jugadores.find(j => j.user === user && j.pass === pass);
+      if (jugador) {
+        mensaje.innerHTML = `✅ Bienvenido ${jugador.nombre} <br> Categoría: ${jugador.categoria} <br> Puntos: ${jugador.puntos}`;
+        // Esta línea te redirige al perfil del jugador
+        window.location.href = "perfilJugador.html?usuario=" + jugador.user;
+      } else {
+        mensaje.innerHTML = "❌ Usuario o contraseña incorrectos (Jugador)";
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
 
