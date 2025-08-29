@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
-        // Tu configuración de Firebase
+        // ¡REEMPLAZA ESTO CON LA CONFIGURACIÓN DE TU PROYECTO DE FIREBASE!
         const firebaseConfig = {
           apiKey: "TU_API_KEY",
           authDomain: "TU_AUTH_DOMAIN",
@@ -24,7 +25,52 @@
     </script>
 </head>
 <body>
-...
-<script src="script.js"></script>
+    <header>
+        <h1>Administración de Puntos de Jugadores</h1>
+    </header>
+
+    <main>
+        <section id="admin-section" style="display: none;">
+            <h2>Panel de Administración</h2>
+            <div id="login-container">
+                <label for="admin-key">Clave de Acceso:</label>
+                <input type="password" id="admin-key">
+                <button onclick="loginAdmin()">Entrar</button>
+            </div>
+            
+            <div id="admin-panel" style="display: none;">
+                <h3>Otorgar Puntos</h3>
+                <label for="category-select">Selecciona Categoría:</label>
+                <select id="category-select">
+                    <option value="pollito">Pollito</option>
+                    <option value="infantil">Infantil</option>
+                    <option value="preinfantil">Preinfantil</option>
+                    <option value="prejuvenil">Prejuvenil</option>
+                    <option value="juvenil">Juvenil</option>
+                    <option value="femenina">Femenina</option>
+                </select>
+                
+                <label for="player-name">Nombre del Jugador:</label>
+                <input type="text" id="player-name">
+
+                <label for="points-input">Puntos a Otorgar:</label>
+                <input type="number" id="points-input" min="1">
+                
+                <button onclick="addPoints()">Otorgar Puntos</button>
+            </div>
+        </section>
+
+        <section id="player-section">
+            <h2>Puntajes de Jugadores</h2>
+            <div id="points-display">
+                </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 JUGADORES</p>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
