@@ -76,68 +76,65 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const firebaseConfig = {
-              apiKey: "TU_API_KEY",
-              authDomain: "TU_AUTH_DOMAIN",
-              databaseURL: "TU_DATABASE_URL",
-              projectId: "TU_PROJECT_ID",
-              storageBucket: "TU_STORAGE_BUCKET",
-              messagingSenderId: "TU_MESSAGING_SENDER_ID",
-              appId: "TU_APP_ID"
-            };
-            firebase.initializeApp(firebaseConfig);
+        // Configuración Firebase
+        const firebaseConfig = {
+          apiKey: "TU_API_KEY",
+          authDomain: "TU_AUTH_DOMAIN",
+          databaseURL: "TU_DATABASE_URL",
+          projectId: "TU_PROJECT_ID",
+          storageBucket: "TU_STORAGE_BUCKET",
+          messagingSenderId: "TU_MESSAGING_SENDER_ID",
+          appId: "TU_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const playersRef = database.ref('players');
 
-            const startSection = document.getElementById('start-section');
-            const categoriesSection = document.getElementById('categories-section');
-            const playersSection = document.getElementById('players-section');
-            const pointsDisplay = document.getElementById('points-display');
-            const categoryTitle = document.getElementById('category-title');
-
-            const database = firebase.database();
-            const playersRef = database.ref('players');
-
-            window.showCategories = function() {
-                startSection.style.display = 'none';
-                categoriesSection.style.display = 'block';
-                playersSection.style.display = 'none';
-            };
-
-            window.showPlayersByCategory = function(category) {
-                categoriesSection.style.display = 'none';
-                playersSection.style.display = 'block';
-                categoryTitle.textContent = `Puntajes: ${category.charAt(0).toUpperCase() + category.slice(1)}`;
-                
-                const categoryRef = playersRef.child(category);
-                
-                categoryRef.on('value', (snapshot) => {
-                    const players = snapshot.val() || {};
-                    displayPlayers(players);
-                });
-            };
-
-            function displayPlayers(players) {
-                pointsDisplay.innerHTML = '';
-                const playersArray = Object.values(players);
-                const sortedPlayers = playersArray.sort((a, b) => b.points - a.points);
-                
-                sortedPlayers.forEach(player => {
-                    const card = document.createElement('div');
-                    card.className = 'player-card';
-                    card.innerHTML = `
-                        <h4>${player.name}</h4>
-                        <p>Puntos: ${player.points}</p>
-                        <p>Valor: $${player.points * 200} COP</p>
-                    `;
-                    pointsDisplay.appendChild(card);
-                });
-            }
-
-            // Inicialmente, solo muestra la sección de inicio
-            startSection.style.display = 'block';
-            categoriesSection.style.display = 'none';
-            playersSection.style.display = 'none';
+        // Referencias a secciones
+        const startSection = document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("start-section").style.display = "block";
+            document.getElementById("categories-section").style.display = "none";
+            document.getElementById("players-section").style.display = "none";
         });
+
+        // Función para mostrar categorías
+        function showCategories() {
+            document.getElementById("start-section").style.display = "none";
+            document.getElementById("categories-section").style.display = "block";
+            document.getElementById("players-section").style.display = "none";
+        }
+
+        // Función para mostrar jugadores de una categoría
+        function showPlayersByCategory(category) {
+            document.getElementById("categories-section").style.display = "none";
+            document.getElementById("players-section").style.display = "block";
+            document.getElementById("category-title").textContent = `Puntajes: ${category.charAt(0).toUpperCase() + category.slice(1)}`;
+
+            const categoryRef = playersRef.child(category);
+            categoryRef.on('value', (snapshot) => {
+                const players = snapshot.val() || {};
+                displayPlayers(players);
+            });
+        }
+
+        // Mostrar jugadores en pantalla
+        function displayPlayers(players) {
+            const pointsDisplay = document.getElementById("points-display");
+            pointsDisplay.innerHTML = '';
+            const playersArray = Object.values(players);
+            const sortedPlayers = playersArray.sort((a, b) => b.points - a.points);
+            
+            sortedPlayers.forEach(player => {
+                const card = document.createElement('div');
+                card.className = 'player-card';
+                card.innerHTML = `
+                    <h4>${player.name}</h4>
+                    <p>Puntos: ${player.points}</p>
+                    <p>Valor: $${player.points * 200} COP</p>
+                `;
+                pointsDisplay.appendChild(card);
+            });
+        }
     </script>
 </head>
 <body>
@@ -153,25 +150,4 @@
         <section id="categories-section" style="display: none;">
             <h2>Selecciona una Categoría</h2>
             <div class="category-grid">
-                <button class="category-btn" onclick="showPlayersByCategory('pollito')">Pollito</button>
-                <button class="category-btn" onclick="showPlayersByCategory('infantil')">Infantil</button>
-                <button class="category-btn" onclick="showPlayersByCategory('preinfantil')">Preinfantil</button>
-                <button class="category-btn" onclick="showPlayersByCategory('prejuvenil')">Prejuvenil</button>
-                <button class="category-btn" onclick="showPlayersByCategory('juvenil')">Juvenil</button>
-                <button class="category-btn" onclick="showPlayersByCategory('femenina')">Femenina</button>
-            </div>
-        </section>
-
-        <section id="players-section" style="display: none;">
-            <h2 id="category-title">Puntajes</h2>
-            <div id="points-display">
-                </div>
-            <button onclick="showCategories()">Volver</button>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2024 JUGADORES</p>
-    </footer>
-</body>
-</html>
+                <button class="category-btn" onclick="showPlayersByCategory('pol
