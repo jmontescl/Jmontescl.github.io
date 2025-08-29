@@ -12,7 +12,7 @@ const pointsDisplay = document.getElementById('points-display');
 const database = firebase.database();
 const playersRef = database.ref('players');
 
-// Cargar datos al inicio desde Firebase
+// Cargar datos en tiempo real desde Firebase
 playersRef.on('value', (snapshot) => {
     const players = snapshot.val() || {};
     displayPlayers(players);
