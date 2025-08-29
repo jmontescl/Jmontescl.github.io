@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Puntos de Jugadores</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Puntos de Jugadores</h1>
+    <p>¡Consulta tus puntos aquí!</p>
+    
+    <table id="players-table">
+        <thead>
+            <tr>
+                <th>Jugador</th>
+                <th>Categoría A</th>
+                <th>Categoría B</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const playersTableBody = document.querySelector('#players-table tbody');
+            const players = JSON.parse(localStorage.getItem('players')) || [];
+
+            players.forEach(player => {
+                const totalPoints = player.points.categoryA + player.points.categoryB;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${player.name}</td>
+                    <td>${player.points.categoryA}</td>
+                    <td>${player.points.categoryB}</td>
+                    <td>${totalPoints}</td>
+                `;
+                playersTableBody.appendChild(row);
+            });
+        });
+    </script>
+</body>
+</html>
