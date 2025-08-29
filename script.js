@@ -8,9 +8,15 @@ const playerNameInput = document.getElementById('player-name');
 const pointsInput = document.getElementById('points-input');
 const pointsDisplay = document.getElementById('points-display');
 
-// Cargar datos al inicio
-let players = JSON.parse(localStorage.getItem('players')) || {};
-displayPlayers();
+// Referencia a la base de datos de Firebase
+const database = firebase.database();
+const playersRef = database.ref('players');
+
+// Cargar datos al inicio desde Firebase
+playersRef.on('value', (snapshot) => {
+    const players = snapshot.val() || {};
+    displayPlayers(players);
+});
 
 function loginAdmin() {
     if (adminKeyInput.value === ADMIN_KEY) {
@@ -25,43 +31,51 @@ function loginAdmin() {
 function addPoints() {
     const category = categorySelect.value;
     const playerName = playerNameInput.value.trim();
-    const points = parseInt(pointsInput.value);
+    const pointsToAdd = parseInt(pointsInput.value);
 
-    if (playerName === '' || isNaN(points) || points <= 0) {
+    if (playerName === '' || isNaN(pointsToAdd) || pointsToAdd <= 0) {
         alert('Por favor, ingresa un nombre de jugador y una cantidad de puntos válida.');
         return;
     }
 
-    if (!players[category]) {
-        players[category] = [];
-    }
+    // Usar una referencia para la categoría específica
+    const categoryRef = playersRef.child(category);
 
-    // Buscar si el jugador ya existe en la categoría
-    const existingPlayer = players[category].find(p => p.name.toLowerCase() === playerName.toLowerCase());
-    
-    if (existingPlayer) {
-        existingPlayer.points += points;
-    } else {
-        players[category].push({
-            name: playerName,
-            points: points
-        });
-    }
+    // Obtener los datos de la categoría para encontrar al jugador
+    categoryRef.once('value', (snapshot) => {
+        const playersInCategory = snapshot.val() || {};
+        let playerExists = false;
 
-    // Guardar en localStorage
-    localStorage.setItem('players', JSON.stringify(players));
+        // Iterar sobre los jugadores para ver si ya existe
+        for (let key in playersInCategory) {
+            if (playersInCategory[key].name.toLowerCase() === playerName.toLowerCase()) {
+                // El jugador ya existe, actualiza los puntos
+                const newPoints = playersInCategory[key].points + pointsToAdd;
+                categoryRef.child(key).update({ points: newPoints });
+                playerExists = true;
+                break;
+            }
+        }
 
-    // Limpiar campos y actualizar la visualización
+        // Si el jugador no existe, crea uno nuevo
+        if (!playerExists) {
+            categoryRef.push({
+                name: playerName,
+                points: pointsToAdd
+            });
+        }
+    });
+
+    // Limpiar campos
     playerNameInput.value = '';
     pointsInput.value = '';
-    displayPlayers();
-    alert(`Se han otorgado ${points} puntos a ${playerName} en la categoría ${category}.`);
+    alert(`Se han otorgado ${pointsToAdd} puntos a ${playerName} en la categoría ${category}.`);
 }
 
-function displayPlayers() {
+function displayPlayers(players) {
     pointsDisplay.innerHTML = '';
     
-    // Convertir el objeto de jugadores en un array de categorías
+    // Obtener las categorías del objeto de jugadores
     const categories = Object.keys(players);
     
     categories.forEach(category => {
@@ -69,8 +83,9 @@ function displayPlayers() {
         categoryHeader.textContent = `Categoría: ${category.charAt(0).toUpperCase() + category.slice(1)}`;
         pointsDisplay.appendChild(categoryHeader);
 
-        // Ordenar los jugadores por puntos (de mayor a menor)
-        const sortedPlayers = players[category].sort((a, b) => b.points - a.points);
+        // Convertir el objeto de jugadores en un array y ordenarlo
+        const playersArray = Object.values(players[category]);
+        const sortedPlayers = playersArray.sort((a, b) => b.points - a.points);
 
         sortedPlayers.forEach(player => {
             const card = document.createElement('div');
@@ -85,5 +100,5 @@ function displayPlayers() {
     });
 }
 
-// Inicialmente, mostrar la sección de administración para el login
+// Mostrar la sección de administración para el login
 adminSection.style.display = 'block';
