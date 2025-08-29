@@ -31,7 +31,13 @@
     <main>
         <section id="admin-section">
             <h2>Panel de Administración</h2>
-            <div id="admin-panel">
+            <div id="login-container">
+                <label for="admin-key">Clave de Acceso:</label>
+                <input type="password" id="admin-key">
+                <button onclick="loginAdmin()">Entrar</button>
+            </div>
+            
+            <div id="admin-panel" style="display: none;">
                 <h3>Otorgar Puntos</h3>
                 <label for="category-select">Selecciona Categoría:</label>
                 <select id="category-select">
