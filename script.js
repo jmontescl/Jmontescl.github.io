@@ -8,7 +8,7 @@ const playerNameInput = document.getElementById('player-name');
 const pointsInput = document.getElementById('points-input');
 const pointsDisplay = document.getElementById('points-display');
 
-// Referencia a la base de datos de Firebase
+// Estas variables DEBEN ser declaradas ANTES de las funciones que las usan.
 const database = firebase.database();
 const playersRef = database.ref('players');
 
@@ -44,7 +44,6 @@ function addPoints() {
         const playersInCategory = snapshot.val() || {};
         let playerKeyToUpdate = null;
 
-        // Buscar si el jugador ya existe en la categoría
         for (let key in playersInCategory) {
             if (playersInCategory[key].name.toLowerCase() === playerName.toLowerCase()) {
                 playerKeyToUpdate = key;
@@ -53,11 +52,9 @@ function addPoints() {
         }
 
         if (playerKeyToUpdate) {
-            // El jugador ya existe, actualiza los puntos
             const newPoints = playersInCategory[playerKeyToUpdate].points + pointsToAdd;
             categoryRef.child(playerKeyToUpdate).update({ points: newPoints });
         } else {
-            // Si el jugador no existe, crea uno nuevo
             categoryRef.push({
                 name: playerName,
                 points: pointsToAdd
@@ -65,7 +62,6 @@ function addPoints() {
         }
     });
 
-    // Limpiar campos
     playerNameInput.value = '';
     pointsInput.value = '';
     alert(`Se han otorgado ${pointsToAdd} puntos a ${playerName} en la categoría ${category}.`);
@@ -74,7 +70,6 @@ function addPoints() {
 function displayPlayers(players) {
     pointsDisplay.innerHTML = '';
     
-    // Obtener las categorías del objeto de jugadores
     const categories = Object.keys(players);
     
     categories.forEach(category => {
@@ -82,7 +77,6 @@ function displayPlayers(players) {
         categoryHeader.textContent = `Categoría: ${category.charAt(0).toUpperCase() + category.slice(1)}`;
         pointsDisplay.appendChild(categoryHeader);
 
-        // Convertir el objeto de jugadores en un array y ordenarlo
         const playersArray = Object.values(players[category]);
         const sortedPlayers = playersArray.sort((a, b) => b.points - a.points);
 
@@ -99,5 +93,4 @@ function displayPlayers(players) {
     });
 }
 
-// Inicialmente, mostrar solo la sección de login
 adminSection.style.display = 'block';
