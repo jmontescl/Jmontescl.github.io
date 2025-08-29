@@ -63,39 +63,5 @@
 
   // Jugadores registrados (puedes añadir más)
   const jugadores = [
-    { user: "juan10", pass: "abcd", nombre: "Juan Pérez", categoria: "Juvenil", puntos: 10 },
-    { user: "maria9", pass: "maria123", nombre: "María López", categoria: "Femenina", puntos: 15 },
-    { user: "carlos8", pass: "qwerty", nombre: "Carlos Gómez", categoria: "Prejuvenil", puntos: 8 }
-  ];
-
-  function login() {
-    const tipo = document.getElementById("tipoUsuario").value;
-    const user = document.getElementById("usuario").value;
-    const pass = document.getElementById("clave").value;
-    const mensaje = document.getElementById("mensaje");
-
-    if (tipo === "admin") {
-      if (user === adminUser.user && pass === adminUser.pass) {
-        mensaje.innerHTML = "✅ Bienvenido Administrador";
-        // Aquí puedes redirigir al panel del admin
-        // window.location.href = "admin.html";
-      } else {
-        mensaje.innerHTML = "❌ Usuario o contraseña incorrectos (Admin)";
-      }
-    }
-
-    if (tipo === "jugador") {
-      const jugador = jugadores.find(j => j.user === user && j.pass === pass);
-      if (jugador) {
-        mensaje.innerHTML = `✅ Bienvenido ${jugador.nombre} <br> Categoría: ${jugador.categoria} <br> Puntos: ${jugador.puntos}`;
-        // Aquí puedes redirigir al perfil del jugador
-        // window.location.href = "perfilJugador.html?usuario=" + jugador.user;
-      } else {
-        mensaje.innerHTML = "❌ Usuario o contraseña incorrectos (Jugador)";
-      }
-    }
-  }
-</script>
-
-</body>
-</html>
+    { user: "juan10", pass: "abcd", nombre:
+      
