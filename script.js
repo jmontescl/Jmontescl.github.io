@@ -38,27 +38,26 @@ function addPoints() {
         return;
     }
 
-    // Usar una referencia para la categoría específica
     const categoryRef = playersRef.child(category);
 
-    // Obtener los datos de la categoría para encontrar al jugador
     categoryRef.once('value', (snapshot) => {
         const playersInCategory = snapshot.val() || {};
-        let playerExists = false;
+        let playerKeyToUpdate = null;
 
-        // Iterar sobre los jugadores para ver si ya existe
+        // Buscar si el jugador ya existe en la categoría
         for (let key in playersInCategory) {
             if (playersInCategory[key].name.toLowerCase() === playerName.toLowerCase()) {
-                // El jugador ya existe, actualiza los puntos
-                const newPoints = playersInCategory[key].points + pointsToAdd;
-                categoryRef.child(key).update({ points: newPoints });
-                playerExists = true;
+                playerKeyToUpdate = key;
                 break;
             }
         }
 
-        // Si el jugador no existe, crea uno nuevo
-        if (!playerExists) {
+        if (playerKeyToUpdate) {
+            // El jugador ya existe, actualiza los puntos
+            const newPoints = playersInCategory[playerKeyToUpdate].points + pointsToAdd;
+            categoryRef.child(playerKeyToUpdate).update({ points: newPoints });
+        } else {
+            // Si el jugador no existe, crea uno nuevo
             categoryRef.push({
                 name: playerName,
                 points: pointsToAdd
@@ -100,5 +99,5 @@ function displayPlayers(players) {
     });
 }
 
-// Mostrar la sección de administración para el login
+// Inicialmente, mostrar solo la sección de login
 adminSection.style.display = 'block';
