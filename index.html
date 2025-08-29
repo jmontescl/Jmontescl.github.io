@@ -110,7 +110,7 @@
                 displayPlayers(players);
             });
 
-            function loginAdmin() {
+            window.loginAdmin = function() {
                 if (adminKeyInput.value === ADMIN_KEY) {
                     loginContainer.style.display = 'none';
                     adminPanel.style.display = 'block';
@@ -120,7 +120,7 @@
                 }
             }
 
-            function addPoints() {
+            window.addPoints = function() {
                 const category = categorySelect.value;
                 const playerName = playerNameInput.value.trim();
                 const pointsToAdd = parseInt(pointsInput.value);
@@ -184,8 +184,6 @@
                     });
                 });
             }
-
-            adminSection.style.display = 'block';
         });
     </script>
 </head>
