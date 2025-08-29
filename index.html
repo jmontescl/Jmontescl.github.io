@@ -2,43 +2,57 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Puntos de Jugadores</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Puntos de Jugadores</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Puntos de Jugadores</h1>
-    <p>¡Consulta tus puntos aquí!</p>
-    
-    <table id="players-table">
-        <thead>
-            <tr>
-                <th>Jugador</th>
-                <th>Categoría A</th>
-                <th>Categoría B</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            </tbody>
-    </table>
+    <header>
+        <h1>Administración de Puntos de Jugadores</h1>
+    </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const playersTableBody = document.querySelector('#players-table tbody');
-            const players = JSON.parse(localStorage.getItem('players')) || [];
+    <main>
+        <section id="admin-section" style="display: none;">
+            <h2>Panel de Administración</h2>
+            <div id="login-container">
+                <label for="admin-key">Clave de Acceso:</label>
+                <input type="password" id="admin-key">
+                <button onclick="loginAdmin()">Entrar</button>
+            </div>
+            
+            <div id="admin-panel" style="display: none;">
+                <h3>Otorgar Puntos</h3>
+                <label for="category-select">Selecciona Categoría:</label>
+                <select id="category-select">
+                    <option value="pollito">Pollito</option>
+                    <option value="infantil">Infantil</option>
+                    <option value="preinfantil">Preinfantil</option>
+                    <option value="prejuvenil">Prejuvenil</option>
+                    <option value="juvenil">Juvenil</option>
+                    <option value="femenina">Femenina</option>
+                </select>
+                
+                <label for="player-name">Nombre del Jugador:</label>
+                <input type="text" id="player-name">
 
-            players.forEach(player => {
-                const totalPoints = player.points.categoryA + player.points.categoryB;
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${player.name}</td>
-                    <td>${player.points.categoryA}</td>
-                    <td>${player.points.categoryB}</td>
-                    <td>${totalPoints}</td>
-                `;
-                playersTableBody.appendChild(row);
-            });
-        });
-    </script>
+                <label for="points-input">Puntos a Otorgar:</label>
+                <input type="number" id="points-input" min="1">
+                
+                <button onclick="addPoints()">Otorgar Puntos</button>
+            </div>
+        </section>
+
+        <section id="player-section">
+            <h2>Puntajes de Jugadores</h2>
+            <div id="points-display">
+                </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 JUGADORES</p>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
