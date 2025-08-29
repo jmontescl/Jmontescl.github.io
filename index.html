@@ -2,23 +2,25 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Login Academia angeles</title>
+  <title>Panel de Administración</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f4f4f4;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      text-align: center;
     }
-    .login-container {
+    .container {
       background: white;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
-      width: 300px;
-      text-align: center;
+      width: 400px;
+      margin-bottom: 20px;
     }
     input {
       display: block;
@@ -41,63 +43,94 @@
     button:hover {
       background: #218838;
     }
+    #listaJugadores {
+      text-align: left;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
 
-<div class="login-container">
-  <h2>Login Academia los angeles</h2>
-  <select id="tipoUsuario">
-    <option value="admin">Administrador</option>
-    <option value="jugador">Jugador</option>
-  </select>
-  <input type="text" id="usuario" placeholder="Usuario">
-  <input type="password" id="clave" placeholder="Contraseña">
-  <button onclick="login()">Ingresar</button>
-  <p id="mensaje"></p>
+<div class="container">
+  <h2>Panel de Administración</h2>
+  <h3>Agregar Nuevo Jugador</h3>
+  <input type="text" id="nuevoUsuario" placeholder="Usuario">
+  <input type="password" id="nuevaClave" placeholder="Contraseña">
+  <input type="text" id="nuevoNombre" placeholder="Nombre Completo">
+  <input type="text" id="nuevaCategoria" placeholder="Categoría">
+  <input type="number" id="nuevosPuntos" placeholder="Puntos" value="0">
+  <button onclick="agregarJugador()">Agregar Jugador</button>
+  <p id="mensajeAdmin"></p>
+</div>
+
+<div class="container" id="listaJugadoresContainer">
+  <h3>Jugadores Registrados</h3>
+  <ul id="listaJugadores"></ul>
 </div>
 
 <script>
-  // Administrador fijo
-  const adminUser = { user: "admin", pass: "1234" };
-
-  // Jugadores registrados (incluye a Los Angeles)
-  const jugadores = [
-    { user: "jose", pass: "jose123", nombre: "Jose montes", categoria: "Juvenil", puntos: 10 },
-    { user: "maria9", pass: "maria123", nombre: "María López", categoria: "Femenina", puntos: 15 },
-    { user: "carlos8", pass: "qwerty", nombre: "Carlos Gómez", categoria: "Prejuvenil", puntos: 8 },
-    { user: "losangeles", pass: "solares", nombre: "Los Angeles", categoria: "Equipo", puntos: 25 }
-  ];
-
-  function login() {
-    const tipo = document.getElementById("tipoUsuario").value;
-    const user = document.getElementById("usuario").value;
-    const pass = document.getElementById("clave").value;
-    const mensaje = document.getElementById("mensaje");
-
-    if (tipo === "admin") {
-      if (user === adminUser.user && pass === adminUser.pass) {
-        mensaje.innerHTML = "✅ Bienvenido Administrador";
-        // Esta línea te redirige al panel de administrador
-        window.location.href = "admin.html";
-      } else {
-        mensaje.innerHTML = "❌ Usuario o contraseña incorrectos (Admin)";
-      }
+  function cargarJugadores() {
+    const jugadoresGuardados = localStorage.getItem('jugadores');
+    if (jugadoresGuardados) {
+      return JSON.parse(jugadoresGuardados);
     }
+    // Jugadores iniciales si no hay datos guardados
+    return [
+      { user: "juan10", pass: "abcd", nombre: "Juan Pérez", categoria: "Juvenil", puntos: 10 },
+      { user: "maria9", pass: "maria123", nombre: "María López", categoria: "Femenina", puntos: 15 },
+      { user: "carlos8", pass: "qwerty", nombre: "Carlos Gómez", categoria: "Prejuvenil", puntos: 8 },
+      { user: "losangeles", pass: "solares", nombre: "Los Angeles", categoria: "Equipo", puntos: 25 }
+    ];
+  }
 
-    if (tipo === "jugador") {
-      const jugador = jugadores.find(j => j.user === user && j.pass === pass);
-      if (jugador) {
-        mensaje.innerHTML = `✅ Bienvenido ${jugador.nombre} <br> Categoría: ${jugador.categoria} <br> Puntos: ${jugador.puntos}`;
-        // Esta línea te redirige al perfil del jugador
-        window.location.href = "perfilJugador.html?usuario=" + jugador.user;
-      } else {
-        mensaje.innerHTML = "❌ Usuario o contraseña incorrectos (Jugador)";
-      }
+  function mostrarJugadores() {
+    const jugadores = cargarJugadores();
+    const lista = document.getElementById('listaJugadores');
+    lista.innerHTML = ''; // Limpia la lista
+    jugadores.forEach(jugador => {
+      const li = document.createElement('li');
+      li.textContent = `${jugador.nombre} (${jugador.user}) - Categoría: ${jugador.categoria}, Puntos: ${jugador.puntos}`;
+      lista.appendChild(li);
+    });
+  }
+
+  function agregarJugador() {
+    const usuario = document.getElementById('nuevoUsuario').value;
+    const clave = document.getElementById('nuevaClave').value;
+    const nombre = document.getElementById('nuevoNombre').value;
+    const categoria = document.getElementById('nuevaCategoria').value;
+    const puntos = parseInt(document.getElementById('nuevosPuntos').value);
+    const mensaje = document.getElementById('mensajeAdmin');
+
+    if (usuario && clave && nombre && categoria) {
+      const jugadores = cargarJugadores();
+      const nuevoJugador = {
+        user: usuario,
+        pass: clave,
+        nombre: nombre,
+        categoria: categoria,
+        puntos: puntos
+      };
+      jugadores.push(nuevoJugador);
+      localStorage.setItem('jugadores', JSON.stringify(jugadores));
+      mensaje.textContent = `✅ Jugador ${nombre} agregado con éxito.`;
+      
+      // Limpiar los campos
+      document.getElementById('nuevoUsuario').value = '';
+      document.getElementById('nuevaClave').value = '';
+      document.getElementById('nuevoNombre').value = '';
+      document.getElementById('nuevaCategoria').value = '';
+      document.getElementById('nuevosPuntos').value = '0';
+
+      mostrarJugadores();
+    } else {
+      mensaje.textContent = "❌ Por favor, completa todos los campos.";
     }
   }
+
+  // Cargar y mostrar los jugadores al cargar la página
+  mostrarJugadores();
 </script>
 
 </body>
 </html>
-
