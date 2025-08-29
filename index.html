@@ -35,63 +35,40 @@
             border: 1px solid #ddd;
             border-radius: 8px;
         }
-        input[type="text"], input[type="number"], input[type="password"], select {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        .center-content {
+            text-align: center;
         }
-        button {
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .category-btn {
             background-color: #28a745;
             color: white;
-            padding: 10px 15px;
+            padding: 15px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1em;
         }
-        button:hover {
+        .category-btn:hover {
             background-color: #218838;
-        }
-        #points-display {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
         }
         .player-card {
             background-color: #e9ecef;
             padding: 15px;
             border-radius: 6px;
             text-align: center;
-            position: relative;
         }
         .player-card h4 {
             margin: 0;
             color: #007bff;
         }
-        .points-value {
+        .player-card p {
+            margin: 5px 0;
             font-weight: bold;
-            font-size: 1.2em;
-            cursor: pointer;
-            border-bottom: 2px dashed #007bff;
-        }
-        .points-value:focus {
-            outline: none;
-            border-bottom: 2px solid red;
-        }
-        .delete-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
         }
     </style>
 
@@ -111,139 +88,90 @@
             };
             firebase.initializeApp(firebaseConfig);
 
-            const ADMIN_KEY = 'jmontes2004';
-            const adminSection = document.getElementById('admin-section');
-            const loginContainer = document.getElementById('login-container');
-            const adminPanel = document.getElementById('admin-panel');
-            const adminKeyInput = document.getElementById('admin-key');
+            const startSection = document.getElementById('start-section');
+            const categoriesSection = document.getElementById('categories-section');
+            const playersSection = document.getElementById('players-section');
             const pointsDisplay = document.getElementById('points-display');
-            const newPlayerBtn = document.getElementById('new-player-btn');
+            const categoryTitle = document.getElementById('category-title');
 
             const database = firebase.database();
             const playersRef = database.ref('players');
 
-            playersRef.on('value', (snapshot) => {
-                const players = snapshot.val() || {};
-                displayPlayers(players);
-            });
-            
-            window.loginAdmin = function() {
-                if (adminKeyInput.value === ADMIN_KEY) {
-                    loginContainer.style.display = 'none';
-                    adminPanel.style.display = 'block';
-                    alert('Acceso de administrador concedido');
-                } else {
-                    alert('Clave incorrecta. Acceso denegado.');
-                }
+            window.showCategories = function() {
+                startSection.style.display = 'none';
+                categoriesSection.style.display = 'block';
+                playersSection.style.display = 'none';
+            };
+
+            window.showPlayersByCategory = function(category) {
+                categoriesSection.style.display = 'none';
+                playersSection.style.display = 'block';
+                categoryTitle.textContent = `Puntajes: ${category.charAt(0).toUpperCase() + category.slice(1)}`;
+                
+                const categoryRef = playersRef.child(category);
+                
+                categoryRef.on('value', (snapshot) => {
+                    const players = snapshot.val() || {};
+                    displayPlayers(players);
+                });
             };
 
             function displayPlayers(players) {
                 pointsDisplay.innerHTML = '';
+                const playersArray = Object.values(players);
+                const sortedPlayers = playersArray.sort((a, b) => b.points - a.points);
                 
-                const categories = Object.keys(players);
-                
-                categories.forEach(category => {
-                    const categoryHeader = document.createElement('h3');
-                    categoryHeader.textContent = `Categoría: ${category.charAt(0).toUpperCase() + category.slice(1)}`;
-                    pointsDisplay.appendChild(categoryHeader);
-
-                    const playersArray = Object.entries(players[category]).map(([key, value]) => ({...value, key}));
-                    const sortedPlayers = playersArray.sort((a, b) => b.points - a.points);
-
-                    sortedPlayers.forEach(player => {
-                        const card = document.createElement('div');
-                        card.className = 'player-card';
-                        card.innerHTML = `
-                            <button class="delete-btn" onclick="deletePlayer('${category}', '${player.key}')">X</button>
-                            <h4>${player.name}</h4>
-                            <p>Puntos: <span contenteditable="true" class="points-value" data-category="${category}" data-key="${player.key}">${player.points}</span></p>
-                            <p>Valor: $${player.points * 200} COP</p>
-                        `;
-                        pointsDisplay.appendChild(card);
-                    });
-                });
-
-                document.querySelectorAll('.points-value').forEach(span => {
-                    span.addEventListener('blur', (event) => {
-                        const newPoints = parseInt(event.target.textContent);
-                        const category = event.target.dataset.category;
-                        const playerKey = event.target.dataset.key;
-                        
-                        if (!isNaN(newPoints) && newPoints >= 0) {
-                            database.ref(`players/${category}/${playerKey}`).update({ points: newPoints });
-                        } else {
-                            alert('Por favor, ingresa un número de puntos válido.');
-                        }
-                    });
+                sortedPlayers.forEach(player => {
+                    const card = document.createElement('div');
+                    card.className = 'player-card';
+                    card.innerHTML = `
+                        <h4>${player.name}</h4>
+                        <p>Puntos: ${player.points}</p>
+                        <p>Valor: $${player.points * 200} COP</p>
+                    `;
+                    pointsDisplay.appendChild(card);
                 });
             }
 
-            window.deletePlayer = function(category, key) {
-                if (confirm('¿Estás seguro de que quieres eliminar a este jugador?')) {
-                    database.ref(`players/${category}/${key}`).remove();
-                }
-            };
-        
-            window.addPlayer = function() {
-                const category = document.getElementById('new-player-category').value;
-                const playerName = document.getElementById('new-player-name').value.trim();
-                if (playerName) {
-                     database.ref(`players/${category}`).push({
-                        name: playerName,
-                        points: 0
-                    });
-                    document.getElementById('new-player-name').value = '';
-                }
-            };
-
-            adminSection.style.display = 'block';
+            // Inicialmente, solo muestra la sección de inicio
+            startSection.style.display = 'block';
+            categoriesSection.style.display = 'none';
+            playersSection.style.display = 'none';
         });
     </script>
 </head>
 <body>
     <header>
-        <h1>Administración de Puntos de Jugadores</h1>
+        <h1>Sistema de Puntos de Jugadores</h1>
     </header>
 
     <main>
-        <section id="admin-section">
-            <h2>Panel de Administración</h2>
-            <div id="login-container">
-                <label for="admin-key">Clave de Acceso:</label>
-                <input type="password" id="admin-key">
-                <button onclick="loginAdmin()">Entrar</button>
-            </div>
-            
-            <div id="admin-panel" style="display: none;">
-                <h3>Agregar Nuevo Jugador</h3>
-                <label for="new-player-category">Selecciona Categoría:</label>
-                <select id="new-player-category">
-                    <option value="pollito">Pollito</option>
-                    <option value="infantil">Infantil</option>
-                    <option value="preinfantil">Preinfantil</option>
-                    <option value="prejuvenil">Prejuvenil</option>
-                    <option value="juvenil">Juvenil</option>
-                    <option value="femenina">Femenina</option>
-                </select>
-                <label for="new-player-name">Nombre del Jugador:</label>
-                <input type="text" id="new-player-name">
-                <button onclick="addPlayer()">Agregar Jugador</button>
-                <hr>
-                <h3>Puntajes para Edición Directa</h3>
-                <div id="points-display">
-                    </div>
+        <section id="start-section" class="center-content">
+            <button onclick="showCategories()">Ver Puntos</button>
+        </section>
+
+        <section id="categories-section" style="display: none;">
+            <h2>Selecciona una Categoría</h2>
+            <div class="category-grid">
+                <button class="category-btn" onclick="showPlayersByCategory('pollito')">Pollito</button>
+                <button class="category-btn" onclick="showPlayersByCategory('infantil')">Infantil</button>
+                <button class="category-btn" onclick="showPlayersByCategory('preinfantil')">Preinfantil</button>
+                <button class="category-btn" onclick="showPlayersByCategory('prejuvenil')">Prejuvenil</button>
+                <button class="category-btn" onclick="showPlayersByCategory('juvenil')">Juvenil</button>
+                <button class="category-btn" onclick="showPlayersByCategory('femenina')">Femenina</button>
             </div>
         </section>
 
-        <section id="player-section">
-            <h2>Puntajes de Jugadores</h2>
-            <div id="points-display-public">
+        <section id="players-section" style="display: none;">
+            <h2 id="category-title">Puntajes</h2>
+            <div id="points-display">
                 </div>
+            <button onclick="showCategories()">Volver</button>
         </section>
     </main>
 
     <footer>
-        <p>&copy; angeles del deporte</p>
+        <p>&copy; 2024 JUGADORES</p>
     </footer>
 </body>
 </html>
